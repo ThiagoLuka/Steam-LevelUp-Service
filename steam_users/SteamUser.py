@@ -1,4 +1,4 @@
-from . import SteamWebPage
+from web_scrapers.SteamWebPage import SteamWebPage
 
 
 class SteamUser:

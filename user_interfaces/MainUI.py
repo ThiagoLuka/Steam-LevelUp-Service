@@ -1,4 +1,4 @@
-from . import InputValidation
+from user_interfaces.InputValidation import InputValidation
 
 
 class MainUI:

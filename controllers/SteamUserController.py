@@ -1,5 +1,5 @@
-from user_interfaces import SteamUserUI
-from web_scrapers import SteamUser
+from user_interfaces.SteamUserUI import SteamUserUI
+from steam_users.SteamUser import SteamUser
 
 
 class SteamUserController:
@@ -8,8 +8,8 @@ class SteamUserController:
         self.__users: list = []
 
     def run_ui(self):
-        command = 10
-        while command != 0:
+
+        while True:
             command = SteamUserUI.run()
             if command == 2:
                 # create_user = SteamUserUI.create_user_options()
@@ -26,5 +26,5 @@ class SteamUserController:
                 SteamUserUI.user_created()
 
             continuar = SteamUserUI.continuar()
-            if (not continuar) or (command == 0):
+            if (command == 0) or (not continuar):
                 return self.__users

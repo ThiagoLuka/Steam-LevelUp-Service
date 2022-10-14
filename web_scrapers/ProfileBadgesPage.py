@@ -2,7 +2,7 @@ import requests
 
 from lxml import html, etree
 
-from . import SteamWebPage
+from web_scrapers.SteamWebPage import SteamWebPage
 
 
 class ProfileBadgesPage(SteamWebPage):
