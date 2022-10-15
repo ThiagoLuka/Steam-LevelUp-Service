@@ -10,8 +10,11 @@ class SteamWebPage:
     def cookies_to_login(self) -> list:
         pass
 
-    # def headers_to_login(self) -> list:
-    #     pass
+    def headers_to_login(self) -> list:
+        pass
 
-    def scrap(self, scrap_params: dict, cookies: dict):
+    def scrap(self, scrap_params: dict, cookies: dict) -> dict:
+        pass
+
+    def interact(self, action: str, cookies: dict, headers: dict) -> dict:
         pass

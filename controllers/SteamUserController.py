@@ -1,5 +1,6 @@
 from singleton.Singleton import Singleton
 from user_interfaces.SteamUserUI import SteamUserUI
+from user_interfaces.GenericUI import GenericUI
 from steam_users.SteamUser import SteamUser
 
 
@@ -28,20 +29,23 @@ class SteamUserController(metaclass=Singleton):
 
             if command == 1:
                 self.view_all_users()
-            # if command == 2:
-            #     new_user_data = SteamUserUI.create_new_user()
-            #     new_user = SteamUser(new_user_data)
-            #     self.__users[new_user.name] = new_user
-            # if command == 3:
-            #     user = self.get_user()
-            #     cookies: dict = SteamUserUI.get_cookies_for_user()
-            #     user.log_in(cookies)
-            #     self.__users.update({user.name: user})
-            # if command == 4:
-            #     user = self.get_user()
-            #     cookies: dict = SteamUserUI.get_headers_for_user()
-            #     user.log_in(cookies)
-            #     self.__users.update({user.name: user})
+            if command == 2:
+                GenericUI.not_implemented()
+                # new_user_data = SteamUserUI.create_new_user()
+                # new_user = SteamUser(new_user_data)
+                # self.__users[new_user.name] = new_user
+            if command == 3:
+                GenericUI.not_implemented()
+                # user = self.get_user()
+                # cookies: dict = SteamUserUI.get_cookies_for_user()
+                # user.log_in(cookies)
+                # self.__users.update({user.name: user})
+            if command == 4:
+                GenericUI.not_implemented()
+                # user = self.get_user()
+                # cookies: dict = SteamUserUI.get_headers_for_user()
+                # user.log_in(cookies)
+                # self.__users.update({user.name: user})
 
             if command == 0:
                 return None

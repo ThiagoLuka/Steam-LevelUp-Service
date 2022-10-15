@@ -13,8 +13,8 @@ class ProfileBadgesPage(SteamWebPage):
     def cookies_to_login(self) -> list:
         return ['steamLoginSecure']
 
-    # def headers_to_login(self) -> list:
-    #     return []
+    def headers_to_login(self) -> list:
+        return []
 
     def scrap(self, scrap_params, cookies: dict):
         main_url = super().BASESTEAMURL + 'profiles/' + scrap_params['steam_id'] + '/badges/?sort=a'
@@ -24,10 +24,13 @@ class ProfileBadgesPage(SteamWebPage):
         self.__scrap_single_page(main_page_tree)
         next_pages_urls = self.__get_next_pages_links(main_page_tree, main_url)
 
-        # for url in next_pages_urls:
-        #     response = requests.get(url, cookies=cookies)
-        #     page_tree = html.fromstring(response.content)
-        #     self.__scrap_single_page(page_tree)
+        for url in next_pages_urls:
+            response = requests.get(url, cookies=cookies)
+            page_tree = html.fromstring(response.content)
+            self.__scrap_single_page(page_tree)
+
+    def interact(self, action: dict, cookies: dict, headers: dict):
+        pass
 
     @staticmethod
     def __scrap_single_page(page_tree: etree.Element):

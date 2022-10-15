@@ -16,10 +16,6 @@ class SteamUserUI:
         return InputValidation.int_within_range(0, 4)
 
     @staticmethod
-    def continuar() -> bool:
-        return InputValidation.continuar()
-
-    @staticmethod
     def user_loaded():
         print('Usuário carregado!')
 
@@ -29,7 +25,7 @@ class SteamUserUI:
 
     @staticmethod
     def view_users(users: dict) -> list:
-        print('Usuários: \n')
+        print('Usuários:')
         user_options: list = []
         for index, user_name in enumerate(users.keys()):
             print(f'{index} - {user_name}')
