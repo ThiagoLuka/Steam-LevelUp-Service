@@ -7,11 +7,12 @@ class MainUI:
     def run() -> int:
         print(
             '\nMENU PRINCIPAL\n'
-            '1 - Gerenciar Steam Profiles\n'
+            '1 - Gerenciar perfis da steam\n'
+            '2 - Scrap profile badges page\n'
             '0 - Sair'
         )
-        return InputValidation.int_within_range(0, 1)
+        return InputValidation.int_within_range(0, 2)
 
     @staticmethod
     def goodbye() -> None:
-        print('\nAté mais!\n')
+        print('\nAté mais!')
