@@ -16,7 +16,7 @@ class ProfileBadgesPage(SteamWebPage):
     def headers_to_login(self) -> list:
         return []
 
-    def scrap(self, scrap_params, cookies: dict):
+    def scrap(self, scrap_params: dict, cookies: dict):
         main_url = super().BASESTEAMURL + 'profiles/' + scrap_params['steam_id'] + '/badges/?sort=a'
         response = requests.get(main_url, cookies=cookies)
         main_page_tree = html.fromstring(response.content)
