@@ -10,3 +10,7 @@ class GenericUI:
     @staticmethod
     def continuar() -> bool:
         return InputValidation.continuar()
+
+    @staticmethod
+    def get_string(text_to_show: str) -> str:
+        return str(input(text_to_show))

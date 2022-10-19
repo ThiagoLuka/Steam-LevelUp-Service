@@ -34,5 +34,6 @@ class SteamUserUI:
 
     @staticmethod
     def choose_user(qtd_of_users: int):
-        print('Digite o número referente ao usuário que deseja: ')
-        return InputValidation.int_within_range(0, qtd_of_users - 1)
+        return InputValidation.int_within_range(
+            0, qtd_of_users - 1, 'Digite o número referente ao usuário que deseja: '
+        )

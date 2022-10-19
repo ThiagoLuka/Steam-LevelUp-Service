@@ -10,14 +10,20 @@ class ProfileBadgesPage(SteamWebPage):
     def requires_login(self) -> bool:
         return False
 
-    def cookies_to_login(self) -> list:
-        return ['steamLoginSecure']
+    def required_user_data(self, interaction_type: str, logged_in: bool = False) -> dict:
+        req_user_data = {
+            'standard': ['steam_id'],
+            'cookies': [],
+        }
+        if logged_in or self.requires_login():
+            req_user_data['cookies'].append('steamLoginSecure')
+        return req_user_data
 
-    def headers_to_login(self) -> list:
+    def possible_interactions(self) -> list:
         return []
 
-    def scrap(self, scrap_params: dict, cookies: dict):
-        main_url = super().BASESTEAMURL + 'profiles/' + scrap_params['steam_id'] + '/badges/?sort=a'
+    def scrap(self, user_data: dict, cookies: dict):
+        main_url = f"{super().BASESTEAMURL}profiles/{user_data['steam_id']}/badges/?sort=a"
         response = requests.get(main_url, cookies=cookies)
         main_page_tree = html.fromstring(response.content)
 
@@ -28,9 +34,6 @@ class ProfileBadgesPage(SteamWebPage):
             response = requests.get(url, cookies=cookies)
             page_tree = html.fromstring(response.content)
             self.__scrap_single_page(page_tree)
-
-    def interact(self, action: dict, cookies: dict, headers: dict):
-        pass
 
     @staticmethod
     def __scrap_single_page(page_tree: etree.Element):

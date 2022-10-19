@@ -7,14 +7,14 @@ class SteamWebPage:
     def requires_login(self) -> bool:
         pass
 
-    def cookies_to_login(self) -> list:
+    def required_user_data(self, interaction_type: str, logged_in: bool) -> dict:
         pass
 
-    def headers_to_login(self) -> list:
+    def possible_interactions(self) -> list:
         pass
 
-    def scrap(self, scrap_params: dict, cookies: dict) -> dict:
+    def scrap(self, user_data: dict, cookies: dict) -> dict:
         pass
 
-    def interact(self, action: str, cookies: dict, headers: dict) -> dict:
+    def interact(self, action: dict, user_data: dict) -> dict:
         pass

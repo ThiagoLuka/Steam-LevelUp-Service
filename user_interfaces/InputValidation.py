@@ -3,12 +3,12 @@
 class InputValidation:
 
     @staticmethod
-    def int_within_range(menor, maior) -> int:
+    def int_within_range(menor, maior, text_to_show: str = '') -> int:
         a = 0
         invalid = True
         while invalid:
             try:
-                a = int(input())
+                a = int(input(text_to_show))
                 if a not in range(menor, maior+1):
                     print(f'Valor fora do intervalo. Entre com o valor entre {menor} e {maior}: ')
                 else:
