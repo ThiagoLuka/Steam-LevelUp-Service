@@ -8,9 +8,9 @@ class SteamUserUI:
         print(
             '\nMENU STEAM USERS\n'
             '1 - Ver usuários carregados\n'
-            '2 - Adicionar usuário\n'
-            '3 - Adicionar cookies a um usuário\n'
-            '4 - Adicionar headers a um usuário\n'
+            '2 - Adicionar um usuário\n'
+            '3 - Adicionar cookies para um usuário\n'
+            '4 - Mudar usuário principal\n'
             '0 - Voltar para menu principal'
         )
         return InputValidation.int_within_range(0, 4)
@@ -26,14 +26,14 @@ class SteamUserUI:
     @staticmethod
     def view_users(users: dict) -> list:
         print('Usuários:')
-        user_options: list = []
+        users_names: list = []
         for index, user_name in enumerate(users.keys()):
             print(f'{index} - {user_name}')
-            user_options.append(user_name)
-        return user_options
+            users_names.append(user_name)
+        return users_names
 
     @staticmethod
     def choose_user(qtd_of_users: int):
         return InputValidation.int_within_range(
-            0, qtd_of_users - 1, 'Digite o número referente ao usuário que deseja: '
+            0, qtd_of_users - 1, 'Escolha o usuário pelo número: '
         )
