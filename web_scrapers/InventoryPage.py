@@ -1,7 +1,7 @@
 import requests
 
 from web_scrapers.SteamWebPage import SteamWebPage
-from controllers.SteamUserController import SteamUserController
+from user_interfaces.GenericUI import GenericUI
 from data_models.SteamInventory import SteamInventory
 
 
@@ -30,10 +30,8 @@ class InventoryPage(SteamWebPage):
         return ['open_booster_pack']
 
     def scrap(self, user_data: dict, cookies: dict):
-
-        full_inventory_page_raw = self.__download_full_inventory(user_data['steam_id'], cookies)
-        inventory = SteamInventory.from_inventory_page(full_inventory_page_raw)
-        # print(inventory.get_all_assets_id('2551450198'))
+        full_inventory_raw = self.__download_full_inventory(user_data['steam_id'], cookies)
+        inventory = SteamInventory.from_inventory_page(full_inventory_raw)
         return inventory
 
     def interact(self, action: dict, user_data: dict):
@@ -47,34 +45,41 @@ class InventoryPage(SteamWebPage):
             )
 
     def __download_full_inventory(self, steam_id: str, cookies: dict) -> dict:
-        print("Please wait a few seconds, downloading today's inventory... ")
+        print("Downloading today's inventory...")
+        GenericUI.progress_completed(progress=0, total=1)
 
-        count = 2000
-        first_page_url = f'{super().BASESTEAMURL}inventory/{steam_id}/753/6?count={count}'
-        inventory_first_page = requests.get(first_page_url, cookies=cookies).json()
+        progress_counter = 0
+        items_per_page = 2000
 
-        inventory_pages_raw = inventory_first_page
+        first_page_url = f'{super().BASESTEAMURL}inventory/{steam_id}/753/6?count={items_per_page}'
+        inventory_page = requests.get(first_page_url, cookies=cookies).json()
 
-        page_counter = 0
-        while 'more_items' in inventory_first_page.keys():
-            next_page_url = first_page_url + '&start_assetid=' + inventory_first_page['last_assetid']
-            inventory_first_page = requests.get(next_page_url, cookies=cookies).json()
+        inventory_size = inventory_page['total_inventory_count']
+        progress_counter += 1
+        GenericUI.progress_completed(progress=progress_counter * items_per_page, total=inventory_size)
 
-            inventory_pages_raw['assets'].extend(inventory_first_page['assets'])
-            inventory_pages_raw['descriptions'].extend(inventory_first_page['descriptions'])
-            # future logging
-            page_counter += 1
-            print(f"\r{page_counter*count/inventory_pages_raw['total_inventory_count']*100:.2f}%", end='', flush=True)
-        print('\r100.00%', flush=True)
-        print(inventory_pages_raw['total_inventory_count'], len(inventory_pages_raw['assets']))
+        full_inventory_pages_raw = inventory_page
+        while 'more_items' in inventory_page.keys():
+            next_page_url = f"{first_page_url}&start_assetid={inventory_page['last_assetid']}"
+            inventory_page = requests.get(next_page_url, cookies=cookies).json()
 
-        return inventory_pages_raw
+            full_inventory_pages_raw['assets'].extend(inventory_page['assets'])
+            full_inventory_pages_raw['descriptions'].extend(inventory_page['descriptions'])
+
+            progress_counter += 1
+            GenericUI.progress_completed(progress=progress_counter * items_per_page, total=inventory_size)
+        GenericUI.progress_completed(progress=1, total=1)
+        # print(inventory_pages_raw['total_inventory_count'], len(inventory_pages_raw['assets']))
+
+        return full_inventory_pages_raw
 
     def __open_booster_pack(self, game_name: str, booster_pack_item_id: str, steam_alias: str,
                             inventory: SteamInventory, cookies: dict):
+        print('Opening booster packs...')
+        GenericUI.progress_completed(progress=0, total=1)
 
-        # returns item_id of booster pack from that game
-        # booster_pack_id = db.get_booster_pack_id(game_name)  # should come from db
+        # function below: returns item_id of booster pack from that game
+        # booster_pack_id = db.get_booster_pack_id(game_name)  # booster_pack_id should come from db
         asset_id_list = inventory.get_all_asset_id(booster_pack_item_id)
 
         url = f"{super().BASESTEAMURL}id/{steam_alias}/ajaxunpackbooster/"
@@ -85,5 +90,4 @@ class InventoryPage(SteamWebPage):
             }
             headers = {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
             requests.post(url, data=payload, headers=headers, cookies=cookies)
-            print(f"\r{(counter + 1) / len(asset_id_list) * 100:.2f}%", end='', flush=True)
-        print('\r100.00%', flush=True)
+            GenericUI.progress_completed(progress=counter + 1, total=len(asset_id_list))
