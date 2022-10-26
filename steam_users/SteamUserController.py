@@ -11,6 +11,21 @@ class SteamUserController(metaclass=Singleton):
         self.__active_user = str
         self.__load_standard_user()
 
+    def run_ui(self) -> None:
+        while True:
+            command = SteamUserUI.run()
+            if command == 1:
+                self.view_all_users()
+            if command == 2:
+                GenericUI.not_implemented()
+            if command == 3:
+                GenericUI.not_implemented()
+            if command == 4:
+                self.change_active_user()
+
+            if command == 0:
+                return None
+
     def get_active_user(self) -> SteamUser:
         return self.__users[self.__active_user]
 
@@ -28,21 +43,6 @@ class SteamUserController(metaclass=Singleton):
         else:
             users_names = SteamUserUI.view_users(self.__users)
         return users_names
-
-    def run_ui(self) -> None:
-        while True:
-            command = SteamUserUI.run()
-            if command == 1:
-                self.view_all_users()
-            if command == 2:
-                GenericUI.not_implemented()
-            if command == 3:
-                GenericUI.not_implemented()
-            if command == 4:
-                self.change_active_user()
-
-            if command == 0:
-                return None
 
     def __choose_user(self) -> SteamUser:
         users_names = self.view_all_users()

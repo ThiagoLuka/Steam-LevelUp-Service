@@ -1,14 +1,16 @@
-from controllers.SteamUserController import SteamUserController
 from user_interfaces.MainUI import MainUI
 from user_interfaces.GenericUI import GenericUI
+from steam_users.SteamUserController import SteamUserController
 from web_scrapers.ProfileBadgesPage import ProfileBadgesPage
 from web_scrapers.InventoryPage import InventoryPage
+from db.DBController import DBController
 
 
 class MainController:
 
     def __init__(self):
         SteamUserController()
+        DBController()
 
     @staticmethod
     def run_ui():

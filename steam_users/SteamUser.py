@@ -1,5 +1,6 @@
 from web_scrapers.SteamWebPage import SteamWebPage
 from data_models.SteamInventory import SteamInventory
+from repositories.SteamUserRepository import SteamUserRepository
 
 
 class SteamUser:
@@ -12,27 +13,29 @@ class SteamUser:
         self.__cookies: dict = {}
         self.log_in(user_data)
         self.__inventory: SteamInventory = SteamInventory()
+        user_in_db = SteamUserRepository.get_by_steam_id(self.__steam_id)
+        if not user_in_db:
+            SteamUserRepository.save_user(self.__steam_id, self.__steam_alias)
 
     @property
-    def steam_id(self):
+    def steam_id(self) -> str:
         return self.__steam_id
 
     @property
-    def name(self):
-        if self.__steam_alias is not None:
-            return self.__steam_alias
-        return self.__steam_id
+    def name(self) -> str:
+        return (
+            self.__steam_alias
+            if self.__steam_alias is not None
+            else self.__steam_id
+        )
 
-    def log_in(self, login_data: dict):
+    def log_in(self, login_data: dict) -> None:
         self.__add_cookies(login_data)
 
-    def inventory_downloaded(self):
-        if self.__inventory.empty():
-            return False
-        return True
+    def inventory_downloaded(self) -> bool:
+        return False if self.__inventory.empty() else True
 
     def scrap(self, web_page: SteamWebPage, logged_in: bool = False):
-
         req_user_data = web_page.required_user_data('scrap', logged_in)
 
         if web_page.requires_login() or logged_in:
@@ -50,7 +53,6 @@ class SteamUser:
         return 200
 
     def interact(self, web_page: SteamWebPage, action: dict):
-
         possible_interactions = web_page.possible_interactions()
         if action['type'] not in possible_interactions:
             return possible_interactions
@@ -67,16 +69,17 @@ class SteamUser:
 
         return 200
 
-    def __add_cookies(self, cookies: dict):
+    def __add_cookies(self, cookies: dict) -> None:
         for cookie in SteamUser.possible_cookies:
             if cookie in cookies.keys():
                 self.__cookies[cookie] = cookies[cookie]
 
     def __missing_user_data_for_request(self, required_user_data: dict) -> list:
+        missing_cookies = []
         for cookie in required_user_data['cookies']:
             if cookie not in self.__cookies.keys():
-                return required_user_data['cookies']
-        return []
+                missing_cookies.append(cookie)
+        return missing_cookies
 
     def __user_data_for_request(self, required_user_data: dict) -> dict:
         user_data: dict = {

@@ -17,7 +17,7 @@ class SteamUserUI:
 
     @staticmethod
     def user_loaded():
-        print('Usuário carregado!')
+        print('Usuário steam carregado!')
 
     @staticmethod
     def no_user():
