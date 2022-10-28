@@ -9,11 +9,12 @@ class DBController(metaclass=Singleton):
         self.__check_dbs_access()
 
     @staticmethod
-    def execute_pg(query: str):
+    def execute_pg(query: str, get_result: bool = True):
         with DBController.__get_pg_connection() as conn:
             cursor = conn.cursor()
             cursor.execute(query)
-            return cursor.fetchall()
+            if get_result:
+                return cursor.fetchall()
 
     @staticmethod
     def __check_dbs_access():

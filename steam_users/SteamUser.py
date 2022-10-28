@@ -13,9 +13,7 @@ class SteamUser:
         self.__cookies: dict = {}
         self.log_in(user_data)
         self.__inventory: SteamInventory = SteamInventory()
-        user_in_db = SteamUserRepository.get_by_steam_id(self.__steam_id)
-        if not user_in_db:
-            SteamUserRepository.save_user(self.__steam_id, self.__steam_alias)
+        SteamUserRepository.save_user(self.__steam_id, self.__steam_alias)
 
     @property
     def steam_id(self) -> str:
