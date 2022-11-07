@@ -1,6 +1,6 @@
 import requests
 
-from web_scrapers.SteamWebPage import SteamWebPage
+from web_crawlers.SteamWebPage import SteamWebPage
 from user_interfaces.GenericUI import GenericUI
 from data_models.SteamInventory import SteamInventory
 

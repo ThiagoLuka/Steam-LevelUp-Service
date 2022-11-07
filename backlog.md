@@ -26,7 +26,7 @@ Um lembrete final: não me proponho a descrever extensivamente de forma prévia 
     - [ ] Conferir baseado em dados já registrados do usuário
     - [ ] Integrar com web_crawlers para solicitar conferência no site da Steam
   - Possibilitar mudança na lingua para o inglês
-    - [x] Isolar elementos da UI para facilitar traducao dos textos
+    - [x] (parcial) Isolar elementos da UI para facilitar traducao dos textos
     - [ ] Inserir textos em arquivos separados do código
     - [ ] Traduzir textos
     - [ ] Acessar comandos da UI por uma interface única que sabe qual lingua está configurada
@@ -35,11 +35,12 @@ Um lembrete final: não me proponho a descrever extensivamente de forma prévia 
 - DB e data structures
   - Estabelecer o básico para persistir dados
     - [x] Criar banco localmente e conectá-lo com o programa
+    - [x] (parcial) Usar pandas como padrão para estrutura de dados
     - [ ] DB remoto?
   - Avançar no DB
     - [ ] Entender mais sobre quais e como esses dados estão sendo coletados
     - [x] Tabela de usuarios
-    - [ ] Tabela de jogos e eventos
+    - [x] Tabela de jogos e eventos
     - [ ] Tabela de badges
     - [ ] Tabela de cartas
     - [ ] Tabela de inventário (é preciso persistir esse dado?)
@@ -56,5 +57,5 @@ Um lembrete final: não me proponho a descrever extensivamente de forma prévia 
     - [ ] Capaz de extrair e persistir novas informações
   - Steam badges
     - [x] Acessar páginas de forma logada
-    - [ ] Capaz de extrair e persistir novas informações
+    - [x] (parcial) Capaz de extrair e persistir novas informações
     - [ ] Nova interação: construir badges

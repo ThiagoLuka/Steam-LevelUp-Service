@@ -1,4 +1,4 @@
-from web_scrapers.SteamWebPage import SteamWebPage
+from web_crawlers.SteamWebPage import SteamWebPage
 from data_models.SteamInventory import SteamInventory
 from repositories.SteamUserRepository import SteamUserRepository
 

@@ -16,9 +16,12 @@ class GenericUI:
         return str(input(text_to_show))
 
     @staticmethod
-    def progress_completed(progress: int, total: int) -> None:
+    def progress_completed(progress: int, total: int, text: str = '') -> None:
         percentage_progress = progress / total
         end = ''
         if percentage_progress == 1:
             end = '\n'
-        print(f'\r{percentage_progress * 100:.2f}%', end=end, flush=True)
+        if text:
+            print(f'\r{percentage_progress * 100:^7.2f}%  -  {text}', end=end, flush=True)
+        else:
+            print(f'\r{percentage_progress * 100:^7.2f}%', end=end, flush=True)

@@ -1,8 +1,8 @@
 from user_interfaces.MainUI import MainUI
 from user_interfaces.GenericUI import GenericUI
 from steam_users.SteamUserController import SteamUserController
-from web_scrapers.ProfileBadgesPage import ProfileBadgesPage
-from web_scrapers.InventoryPage import InventoryPage
+from web_crawlers.ProfileBadgesPage import ProfileBadgesPage
+from web_crawlers.InventoryPage import InventoryPage
 from db.DBController import DBController
 
 

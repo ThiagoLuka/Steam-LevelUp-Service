@@ -11,7 +11,7 @@ class SteamUserRepository:
             ON CONFLICT (steam_id) DO UPDATE
             SET steam_alias = EXCLUDED.steam_alias;
         """
-        DBController.execute_pg(query=query, get_result=False)
+        DBController.execute(query=query)
 
     @staticmethod
     def get_by_steam_id(steam_id: str):
@@ -20,5 +20,5 @@ class SteamUserRepository:
             FROM users
             WHERE steam_id = '{steam_id}';
         """
-        result = DBController.execute_pg(query=query)
+        result = DBController.execute(query=query, get_result=True)
         return result

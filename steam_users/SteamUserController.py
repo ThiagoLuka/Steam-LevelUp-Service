@@ -1,4 +1,4 @@
-from singleton.Singleton import Singleton
+from utils.Singleton import Singleton
 from user_interfaces.SteamUserUI import SteamUserUI
 from user_interfaces.GenericUI import GenericUI
 from steam_users.SteamUser import SteamUser
