@@ -4,17 +4,27 @@ from db.DBController import DBController
 class SteamGamesRepository:
 
     @staticmethod
-    def get_all():
-        query = f""" SELECT * FROM games"""
+    def get_all() -> list[tuple]:
+        query = f"""
+            SELECT * FROM games
+        """
         result = DBController.execute(query=query, get_result=True)
         return result
 
     @staticmethod
-    def get_by_name(name: str):
+    def get_by_name(name: str) -> list[tuple]:
         query = f"""
-            SELECT *
-            FROM games
+            SELECT * FROM games
             WHERE name = '{name}';
+        """
+        result = DBController.execute(query=query, get_result=True)
+        return result
+
+    @staticmethod
+    def get_by_market_id(market_id: str) -> list[tuple]:
+        query = f"""
+            SELECT * FROM games
+            WHERE market_id = '{market_id}';
         """
         result = DBController.execute(query=query, get_result=True)
         return result

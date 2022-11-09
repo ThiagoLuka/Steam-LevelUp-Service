@@ -13,14 +13,13 @@ class SteamGames:
         if isinstance(data, pd.DataFrame):
             self.__df = data
         elif isinstance(data, list):
-            if len(data) == 3:
+            if len(data) == len(self.__columns):
                 self.__df = pd.DataFrame(data=[data], columns=self.__columns)
-            if len(data) == 2:
+            if len(data) == (len(self.__columns) - 1):
                 c = self.__columns.copy()
                 c.remove('id')
                 self.__df = pd.DataFrame(data=[data], columns=c)
-                self.__df['id'] = None
-                self.__df = self.__df[self.__columns]
+                self.__df = self.__df.reindex(columns=self.__columns)
         else:
             self.__df = pd.DataFrame(columns=self.__columns)
 
@@ -35,7 +34,12 @@ class SteamGames:
         df = pd.DataFrame(data=SteamGamesRepository.get_all(), columns=cls.__columns)
         return cls(df)
 
-    def save(self):
+    @staticmethod
+    def get_id_by_market_id(market_id: str) -> str:
+        result = SteamGamesRepository.get_by_market_id(market_id)
+        return result[0][0]
+
+    def save(self) -> None:
         saved = self.all_from_db()
         new_and_update = PandasUtils.df_set_difference(self.__df, saved.__df, 'name')
         if not new_and_update.empty:

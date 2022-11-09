@@ -35,13 +35,14 @@ Um lembrete final: não me proponho a descrever extensivamente de forma prévia 
 - DB e data structures
   - Estabelecer o básico para persistir dados
     - [x] Criar banco localmente e conectá-lo com o programa
+    - [ ] POO para data structures (padronizar elas como as paginas web estão padronizadas)
     - [x] (parcial) Usar pandas como padrão para estrutura de dados
     - [ ] DB remoto?
   - Avançar no DB
     - [ ] Entender mais sobre quais e como esses dados estão sendo coletados
     - [x] Tabela de usuarios
     - [x] Tabela de jogos e eventos
-    - [ ] Tabela de badges
+    - [x] (parcial) Tabela de badges
     - [ ] Tabela de cartas
     - [ ] Tabela de inventário (é preciso persistir esse dado?)
 
@@ -49,6 +50,7 @@ Um lembrete final: não me proponho a descrever extensivamente de forma prévia 
   - Geral
     - [x] Navegar pelas páginas por meio de requests
     - [ ] Desacoplar melhor usuários Steam dos web_crawlers
+    - [ ] Fazer transformação dos dados de forma assíncrona
     - [ ] Navegar por meio do Selenium 
   - Steam Inventory
     - [x] Fazer download e acessar itens do inventário
