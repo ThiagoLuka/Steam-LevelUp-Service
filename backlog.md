@@ -22,9 +22,8 @@ Um lembrete final: não me proponho a descrever extensivamente de forma prévia 
 
 - UI
   - Garantir que entradas do usuário não quebrem o programa
-    - [x] Conferir alguns tipos genéricos
-    - [ ] Conferir baseado em dados já registrados do usuário
-    - [ ] Integrar com web_crawlers para solicitar conferência no site da Steam
+    - [x] Validar alguns tipos genéricos
+    - [ ] Validar entradas baseado em dados já registrados no banco
   - Possibilitar mudança na lingua para o inglês
     - [x] (parcial) Isolar elementos da UI para facilitar traducao dos textos
     - [ ] Inserir textos em arquivos separados do código
@@ -35,29 +34,26 @@ Um lembrete final: não me proponho a descrever extensivamente de forma prévia 
 - DB e data structures
   - Estabelecer o básico para persistir dados
     - [x] Criar banco localmente e conectá-lo com o programa
-    - [ ] POO para data structures (padronizar elas como as paginas web estão padronizadas)
-    - [x] (parcial) Usar pandas como padrão para estrutura de dados
+    - [x] (parcial) Usar pandas para todas as estruturas de dados
     - [ ] DB remoto?
   - Avançar no DB
-    - [ ] Entender mais sobre quais e como esses dados estão sendo coletados
     - [x] Tabela de usuarios
     - [x] Tabela de jogos e eventos
-    - [x] (parcial) Tabela de badges
-    - [ ] Tabela de cartas
-    - [ ] Tabela de inventário (é preciso persistir esse dado?)
+    - [x] Tabelas de badges
+    - [ ] Tabelas de cartas e items
+    - [ ] Tabela de inventários
 
 - Web crawlers
   - Geral
     - [x] Navegar pelas páginas por meio de requests
+    - [ ] Navegar por meio do Selenium
     - [ ] Desacoplar melhor usuários Steam dos web_crawlers
-    - [ ] Fazer transformação dos dados de forma assíncrona
-    - [ ] Navegar por meio do Selenium 
   - Steam Inventory
     - [x] Fazer download e acessar itens do inventário
     - [x] Abrir pacotes de cartas da steam dado id do pacote
     - [ ] Abrir pacotes de cartas dado o nome do jogo
     - [ ] Capaz de extrair e persistir novas informações
   - Steam badges
-    - [x] Acessar páginas de forma logada
-    - [x] (parcial) Capaz de extrair e persistir novas informações
+    - [x] Capaz de extrair e persistir novas informações
+    - [ ] Fazer transformação dos dados de forma assíncrona
     - [ ] Nova interação: construir badges

@@ -31,12 +31,12 @@ CREATE TABLE IF NOT EXISTS pure_badges
  	name TEXT NOT NULL
  );
 
---CREATE TABLE IF NOT EXISTS user_badges
---  (
--- 	id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
--- 	steam_user_id INT REFERENCES users NOT NULL,
--- 	game_badge_id INT REFERENCES game_badges,
--- 	pure_badge_id INT REFERENCES pure_badges,
--- 	datetime_unlocked TIMESTAMP,
--- 	experience INT
---  );
+CREATE TABLE IF NOT EXISTS user_badges
+  (
+ 	id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ 	user_id INT REFERENCES users NOT NULL,
+ 	game_badge_id INT REFERENCES game_badges,
+ 	pure_badge_id INT REFERENCES pure_badges,
+ 	experience INT,
+ 	unlocked_at TIMESTAMP
+  );

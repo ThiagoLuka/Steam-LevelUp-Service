@@ -1,11 +1,11 @@
 import requests
-from typing import Optional
 from datetime import date
+from typing import Optional
 
 from lxml import html
 
-from web_crawlers.SteamWebPage import SteamWebPage
 from user_interfaces.GenericUI import GenericUI
+from web_crawlers.SteamWebPage import SteamWebPage
 from data_models.SteamGames import SteamGames
 from data_models.SteamBadges import SteamBadges
 
@@ -17,8 +17,8 @@ class ProfileBadgesPage(SteamWebPage):
 
     def required_user_data(self, interaction_type: str, logged_in: bool = False) -> dict:
         req_user_data = {
-            'standard': ['steam_id'],
-            'cookies': [],
+            'standard': ['user_id', 'steam_id'],
+            'cookies': ['timezoneOffset'],
         }
         if logged_in or self.requires_login():
             req_user_data['cookies'].append('steamLoginSecure')
@@ -31,13 +31,13 @@ class ProfileBadgesPage(SteamWebPage):
         # Extract
         badges_raw = self.__extract_all_badges_raw(user_data['steam_id'], cookies)
 
-        # Transform/Load
+        # Transform
         games = self.__transform_raw_to_games(badges_raw)
-        games.save()
-
         badges = self.__transform_raw_to_badges(badges_raw)
-        badges.save()
-        # badges.save_with_user(user_data['steam_id'])
+
+        # Load
+        games.save()
+        badges.save(user_data['user_id'])
 
     def __extract_all_badges_raw(self, steam_id: str, cookies: dict) -> list[html.HtmlElement]:
         progress_text = 'Extracting data from badges pages'
@@ -63,7 +63,7 @@ class ProfileBadgesPage(SteamWebPage):
         return all_badges_raw
 
     def __transform_raw_to_games(self, badges_raw: list[html.HtmlElement]) -> SteamGames:
-        progress_text = 'Cleaning and saving data: games'
+        progress_text = 'Cleaning data: games'
         GenericUI.progress_completed(progress=0, total=len(badges_raw), text=progress_text)
 
         games = SteamGames()
@@ -85,7 +85,7 @@ class ProfileBadgesPage(SteamWebPage):
         return games
 
     def __transform_raw_to_badges(self, badges_raw: list[html.HtmlElement]) -> SteamBadges:
-        progress_text = 'Cleaning and saving data: badges'
+        progress_text = 'Cleaning data: badges'
         GenericUI.progress_completed(progress=0, total=len(badges_raw), text=progress_text)
 
         badges = SteamBadges()

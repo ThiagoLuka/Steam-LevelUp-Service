@@ -1,3 +1,4 @@
+from repositories.QueryBuilderPG import QueryBuilderPG
 from db.DBController import DBController
 
 
@@ -5,9 +6,7 @@ class SteamGamesRepository:
 
     @staticmethod
     def get_all() -> list[tuple]:
-        query = f"""
-            SELECT * FROM games
-        """
+        query = f"""SELECT * FROM games;"""
         result = DBController.execute(query=query, get_result=True)
         return result
 
@@ -31,8 +30,7 @@ class SteamGamesRepository:
 
     @staticmethod
     def upsert_single_game(name: str, market_id: str) -> None:
-        if "'" in name:
-            name = name.replace("'", "''")
+        name = QueryBuilderPG.sanitize_string(name)
         query = f"""
             INSERT INTO games (name, market_id)
             VALUES ('{name}', '{market_id}')
@@ -43,19 +41,11 @@ class SteamGamesRepository:
 
     @staticmethod
     def upsert_multiple_games(games: zip) -> None:
-        values = ''
-        for item in games:
-            name, market_id = item
-            if "'" in name:
-                name = name.replace("'", "''")
-            if values == '':
-                values = f"('{name}', '{market_id}')"
-            else:
-                values += f", ('{name}', '{market_id}')"
+        values = QueryBuilderPG.unzip_to_values_query_str(games)
         query = f"""
-                INSERT INTO games (name, market_id)
-                VALUES {values}
-                ON CONFLICT (market_id) DO UPDATE
-                SET name = EXCLUDED.name;
-            """
+            INSERT INTO games (name, market_id)
+            VALUES {values}
+            ON CONFLICT (market_id) DO UPDATE
+            SET name = EXCLUDED.name;
+        """
         DBController.execute(query=query)

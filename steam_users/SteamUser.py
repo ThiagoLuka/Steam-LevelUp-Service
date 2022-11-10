@@ -5,15 +5,15 @@ from repositories.SteamUserRepository import SteamUserRepository
 
 class SteamUser:
 
-    possible_cookies = ['sessionid', 'steamMachineAuth', 'steamLoginSecure']
+    possible_cookies = ['sessionid', 'steamMachineAuth', 'steamLoginSecure', 'timezoneOffset']
 
     def __init__(self, user_data: dict):
         self.__steam_id: str = user_data['steam_id']
         self.__steam_alias: str = user_data['steam_alias']
+        self.__user_id = self.__save_user()
         self.__cookies: dict = {}
         self.log_in(user_data)
         self.__inventory: SteamInventory = SteamInventory()
-        SteamUserRepository.save_user(self.__steam_id, self.__steam_alias)
 
     @property
     def steam_id(self) -> str:
@@ -67,6 +67,14 @@ class SteamUser:
 
         return 200
 
+    def __save_user(self) -> str:
+        saved = SteamUserRepository.get_by_steam_id(self.__steam_id)
+        if not saved:
+            SteamUserRepository.save_user(self.__steam_id, self.__steam_alias)
+        saved = SteamUserRepository.get_by_steam_id(self.__steam_id)
+        user_id = saved[0][0]
+        return user_id
+
     def __add_cookies(self, cookies: dict) -> None:
         for cookie in SteamUser.possible_cookies:
             if cookie in cookies.keys():
@@ -83,6 +91,8 @@ class SteamUser:
         user_data: dict = {
             'cookies': {},
         }
+        if 'user_id' in required_user_data['standard']:
+            user_data['user_id'] = self.__user_id
         if 'steam_id' in required_user_data['standard']:
             user_data['steam_id'] = self.__steam_id
         if 'steam_alias' in required_user_data['standard']:
