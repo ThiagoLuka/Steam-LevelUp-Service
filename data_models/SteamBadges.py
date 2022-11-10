@@ -1,7 +1,7 @@
 import pandas as pd
 
-from utils.PandasUtils import PandasUtils
 from repositories.SteamBadgesRepository import SteamBadgesRepository
+from utils.PandasUtils import PandasUtils
 
 
 class SteamBadges:

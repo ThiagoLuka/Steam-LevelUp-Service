@@ -29,6 +29,10 @@ class SteamGames:
             self.__df.drop_duplicates(inplace=True)
             return self
 
+    @property
+    def df(self) -> pd.DataFrame:
+        return self.__df.copy()
+
     @classmethod
     def all_from_db(cls):
         df = pd.DataFrame(data=SteamGamesRepository.get_all(), columns=cls.__columns)

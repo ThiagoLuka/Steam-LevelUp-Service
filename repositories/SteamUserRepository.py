@@ -4,7 +4,7 @@ from db.DBController import DBController
 class SteamUserRepository:
 
     @staticmethod
-    def save_user(steam_id: str, steam_alias: str = ''):
+    def save_user(steam_id: str, steam_alias: str = '') -> None:
         query = f"""
             INSERT INTO users (steam_id, steam_alias)
             VALUES ('{steam_id}', '{steam_alias}')
@@ -14,10 +14,9 @@ class SteamUserRepository:
         DBController.execute(query=query)
 
     @staticmethod
-    def get_by_steam_id(steam_id: str):
+    def get_by_steam_id(steam_id: str) -> list[tuple]:
         query = f"""
-            SELECT *
-            FROM users
+            SELECT * FROM users
             WHERE steam_id = '{steam_id}';
         """
         result = DBController.execute(query=query, get_result=True)

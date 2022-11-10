@@ -23,7 +23,7 @@ class PandasUtils:
         return zip(*columns_values)
 
     @staticmethod
-    def format_only_positive_int_with_nulls(df: pd.DataFrame, columns: Union[str, list[str]]):
+    def format_only_positive_int_with_nulls(df: pd.DataFrame, columns: Union[str, list[str]]) -> pd.DataFrame:
         if isinstance(columns, str):
             df[[columns]] = df[[columns]].fillna(-1)
             df[[columns]] = df[[columns]].astype(int)
