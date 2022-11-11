@@ -48,6 +48,7 @@ Um lembrete final: não me proponho a descrever extensivamente de forma prévia 
     - [x] Navegar pelas páginas por meio de requests
     - [ ] Navegar por meio do Selenium
     - [ ] Desacoplar melhor usuários Steam dos web_crawlers
+    - [ ] Unificar métodos scrap e interact (scrap deve ser um tipo de interação)
   - Steam Inventory
     - [x] Fazer download e acessar itens do inventário
     - [x] Abrir pacotes de cartas da steam dado id do pacote

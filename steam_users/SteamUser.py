@@ -1,4 +1,6 @@
 from web_crawlers.SteamWebPage import SteamWebPage
+from web_crawlers.InventoryPage import InventoryPage
+from web_crawlers.ProfileBadgesPage import ProfileBadgesPage
 from data_models.SteamInventory import SteamInventory
 from repositories.SteamUserRepository import SteamUserRepository
 
@@ -30,10 +32,25 @@ class SteamUser:
     def log_in(self, login_data: dict) -> None:
         self.__add_cookies(login_data)
 
+    def get_badges(self):
+        self.__scrap(ProfileBadgesPage(), logged_in=True)
+
+    def download_inventory(self) -> None:
+        self.__inventory = self.__scrap(InventoryPage(), logged_in=True)
+
     def inventory_downloaded(self) -> bool:
         return False if self.__inventory.empty() else True
 
-    def scrap(self, web_page: SteamWebPage, logged_in: bool = False):
+    def open_booster_packs(self, booster_pack_class_id: str):
+        # function should use game_name instead of booster_pack_class_id
+        interaction = {
+            'type': 'open_booster_pack',
+            'game_name': '',
+            'booster_pack_class_id': booster_pack_class_id,
+        }
+        self.__interact(InventoryPage(), interaction)
+
+    def __scrap(self, web_page: SteamWebPage, logged_in: bool = False):
         req_user_data = web_page.required_user_data('scrap', logged_in)
 
         if web_page.requires_login() or logged_in:
@@ -45,12 +62,9 @@ class SteamUser:
 
         result = web_page.scrap(user_data, self.__cookies)
 
-        if isinstance(result, SteamInventory):
-            self.__inventory = result
+        return result
 
-        return 200
-
-    def interact(self, web_page: SteamWebPage, action: dict):
+    def __interact(self, web_page: SteamWebPage, action: dict):
         possible_interactions = web_page.possible_interactions()
         if action['type'] not in possible_interactions:
             return possible_interactions
