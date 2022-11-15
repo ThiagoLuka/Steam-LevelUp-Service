@@ -12,24 +12,19 @@ from data_models.SteamBadges import SteamBadges
 
 class ProfileBadgesPage(SteamWebPage):
 
-    def requires_login(self) -> bool:
-        return False
+    @staticmethod
+    def required_user_data() -> tuple:
+        return 'user_id', 'steam_id'
 
-    def required_user_data(self, interaction_type: str, logged_in: bool = False) -> dict:
-        req_user_data = {
-            'standard': ['user_id', 'steam_id'],
-            'cookies': ['timezoneOffset'],
-        }
-        if logged_in or self.requires_login():
-            req_user_data['cookies'].append('steamLoginSecure')
-        return req_user_data
+    @staticmethod
+    def required_cookies() -> tuple:
+        return 'timezoneOffset',
 
-    def possible_interactions(self) -> list:
-        return []
+    def interact(self, cookies: dict, **kwargs):
+        user_id: int = kwargs['user_id']
+        steam_id: str = kwargs['steam_id']
 
-    def scrap(self, user_data: dict, cookies: dict):
-        # Extract
-        badges_raw = self.__extract_all_badges_raw(user_data['steam_id'], cookies)
+        badges_raw = self.__extract_all_badges_raw(steam_id, cookies)
 
         # Transform
         games = self.__transform_raw_to_games(badges_raw)
@@ -37,7 +32,9 @@ class ProfileBadgesPage(SteamWebPage):
 
         # Load
         games.save()
-        badges.save(user_data['user_id'])
+        badges.save(user_id)
+
+        return None
 
     def __extract_all_badges_raw(self, steam_id: str, cookies: dict) -> list[html.HtmlElement]:
         progress_text = 'Extracting data from badges pages'

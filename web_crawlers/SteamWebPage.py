@@ -4,17 +4,13 @@ class SteamWebPage:
 
     BASESTEAMURL = 'https://steamcommunity.com/'
 
-    def requires_login(self) -> bool:
+    @staticmethod
+    def required_user_data() -> tuple:
         pass
 
-    def required_user_data(self, interaction_type: str, logged_in: bool) -> dict:
+    @staticmethod
+    def required_cookies() -> tuple:
         pass
 
-    def possible_interactions(self) -> list:
-        pass
-
-    def scrap(self, user_data: dict, cookies: dict) -> dict:
-        pass
-
-    def interact(self, action: dict, user_data: dict) -> dict:
+    def interact(self, cookies: dict, **kwargs):
         pass

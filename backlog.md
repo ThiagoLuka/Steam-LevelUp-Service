@@ -13,7 +13,6 @@ Um lembrete final: não me proponho a descrever extensivamente de forma prévia 
 - Usuários Steam
   - Adicionar e manipular usuários Steam:
     - [ ] Cadastrar novo usuário Steam
-    - [x] Conferir quais usuários Steam foram cadastrados
     - [x] Selecionar qual usuário será usado para navegar 
   - Fazer login do usuário para acessar páginas privadas da Steam
     - [x] Adicionando cookies de login por meio de arquivo de texto
@@ -34,7 +33,7 @@ Um lembrete final: não me proponho a descrever extensivamente de forma prévia 
 - DB e data structures
   - Estabelecer o básico para persistir dados
     - [x] Criar banco localmente e conectá-lo com o programa
-    - [x] (parcial) Usar pandas para todas as estruturas de dados
+    - [x] (parcial) Usar pandas para todas as estruturas de dados (inventory ta mal feito)
     - [ ] DB remoto?
   - Avançar no DB
     - [x] Tabela de usuarios
@@ -47,10 +46,9 @@ Um lembrete final: não me proponho a descrever extensivamente de forma prévia 
   - Geral
     - [x] Navegar pelas páginas por meio de requests
     - [ ] Navegar por meio do Selenium
-    - [ ] Desacoplar melhor usuários Steam dos web_crawlers
-    - [ ] Unificar métodos scrap e interact (scrap deve ser um tipo de interação)
+    - [x] Desacoplar melhor usuários Steam dos web_crawlers
   - Steam Inventory
-    - [x] Fazer download e acessar itens do inventário
+    - [x] (parcial) Fazer download e acessar itens do inventário
     - [x] Abrir pacotes de cartas da steam dado id do pacote
     - [ ] Abrir pacotes de cartas dado o nome do jogo
     - [ ] Capaz de extrair e persistir novas informações
