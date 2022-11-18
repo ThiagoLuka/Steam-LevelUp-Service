@@ -1,27 +1,23 @@
 import pandas as pd
 
 from repositories.SteamGamesRepository import SteamGamesRepository
-from utils.PandasUtils import PandasUtils
+from data_models.PandasUtils import PandasUtils
 
 
 class SteamGames:
 
-    __name = 'games'
     __columns = ['id', 'name', 'market_id']
 
-    def __init__(self, data = None):
-        if isinstance(data, pd.DataFrame):
-            self.__df = data
-        elif isinstance(data, list):
-            if len(data) == len(self.__columns):
-                self.__df = pd.DataFrame(data=[data], columns=self.__columns)
-            if len(data) == (len(self.__columns) - 1):
-                c = self.__columns.copy()
-                c.remove('id')
-                self.__df = pd.DataFrame(data=[data], columns=c)
-                self.__df = self.__df.reindex(columns=self.__columns)
+    def __init__(self, **data):
+        if not data:
+            self.__df = pd.DataFrame(columns=self.__get_columns())
         else:
-            self.__df = pd.DataFrame(columns=self.__columns)
+            if (
+                    list(data.keys()) != self.__get_columns() and
+                    list(data.keys()) != self.__get_columns(with_id=False)
+            ):
+                raise TypeError(f'Trying to set {self.__class__.__name__} with invalid data')
+            self.__df = pd.DataFrame(data.values(), index=list(data.keys())).T
 
     def __add__(self, other):
         if isinstance(other, SteamGames):
@@ -34,19 +30,28 @@ class SteamGames:
         return self.__df.copy()
 
     @classmethod
-    def all_from_db(cls):
-        df = pd.DataFrame(data=SteamGamesRepository.get_all(), columns=cls.__columns)
-        return cls(df)
+    def from_db(cls):
+        data = SteamGamesRepository.get_all()
+        zipped_data = zip(*data)
+        dict_data = dict(zip(cls.__columns, zipped_data))
+        return cls(**dict_data)
+
+    @classmethod
+    def __get_columns(cls, with_id: bool = True) -> list:
+        cols = cls.__columns.copy()
+        if not with_id:
+            cols.remove('id')
+        return cols
+
+    def save(self) -> None:
+        saved = self.from_db().__df
+        new_and_update = PandasUtils.df_set_difference(self.__df, saved, 'name')
+        if not new_and_update.empty:
+            names = tuple(new_and_update['name'])
+            market_ids = tuple(new_and_update['market_id'])
+            SteamGamesRepository.upsert_multiple_games(zip(names, market_ids))
 
     @staticmethod
     def get_id_by_market_id(market_id: str) -> str:
         result = SteamGamesRepository.get_by_market_id(market_id)
         return result[0][0]
-
-    def save(self) -> None:
-        saved = self.all_from_db()
-        new_and_update = PandasUtils.df_set_difference(self.__df, saved.__df, 'name')
-        if not new_and_update.empty:
-            names = tuple(new_and_update['name'])
-            market_ids = tuple(new_and_update['market_id'])
-            SteamGamesRepository.upsert_multiple_games(zip(names, market_ids))
