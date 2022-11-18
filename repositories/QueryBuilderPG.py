@@ -24,8 +24,12 @@ class QueryBuilderPG:
         return string
 
     @staticmethod
-    def cols_list_to_cols_str(cols_list: list[str]) -> str:
+    def cols_to_insert_list_to_str(cols_list: list[str]) -> str:
         return f"({', '.join(cols_list)})"
+
+    @staticmethod
+    def cols_to_get_list_to_str(cols_list: list[str]) -> str:
+        return f"{', '.join(cols_list)}"
 
     @staticmethod
     def __check_null(string: str) -> bool:

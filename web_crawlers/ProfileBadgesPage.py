@@ -26,15 +26,11 @@ class ProfileBadgesPage(SteamWebPage):
 
         badges_raw = self.__extract_all_badges_raw(steam_id, cookies)
 
-        # Transform
         games = self.__transform_raw_to_games(badges_raw)
-        badges = self.__transform_raw_to_badges(badges_raw)
-
-        # Load
         games.save()
-        badges.save(user_id)
 
-        return None
+        badges = self.__transform_raw_to_badges(badges_raw)
+        badges.save(user_id)
 
     def __extract_all_badges_raw(self, steam_id: str, cookies: dict) -> list[html.HtmlElement]:
         progress_text = 'Extracting data from badges pages'
@@ -75,8 +71,7 @@ class ProfileBadgesPage(SteamWebPage):
             market_id = badge_details_link.split('/')[-2]
             game_name = self.__get_game_name(badge_raw)
 
-            extracted_game = SteamGames([game_name, market_id])
-            games += extracted_game
+            games += SteamGames(name=game_name, market_id=market_id)
             GenericUI.progress_completed(progress=index + 1, total=len(badges_raw), text=progress_text)
 
         return games
@@ -104,8 +99,10 @@ class ProfileBadgesPage(SteamWebPage):
             game_id, pure_badge_page_id = self.__get_game_id_and_pure_badge_page_id(badge_raw)
             unlocked_datetime = self.__get_unlocked_datetime(badge_raw)
 
-            extracted_badge = SteamBadges([badge_name, level, xp, foil, game_id, pure_badge_page_id, unlocked_datetime])
-            badges += extracted_badge
+            badges += SteamBadges(
+                name=badge_name, level=level, experience=xp, foil=foil, game_id=game_id,
+                pure_badge_page_id=pure_badge_page_id, unlocked_at=unlocked_datetime
+            )
             GenericUI.progress_completed(progress=index + 1, total=len(badges_raw), text=progress_text)
 
         return badges

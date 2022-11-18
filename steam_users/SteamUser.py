@@ -12,7 +12,7 @@ class SteamUser:
         self.__steam_alias: str = user_data['steam_alias']
         self.__user_id = self.__save_user()
         self.__crawler = SteamWebCrawler(self.__steam_id, user_data)
-        self.__inventory: SteamInventory = SteamInventory()
+        self.__inventory = SteamInventory()
 
     @property
     def steam_id(self) -> str:
@@ -38,14 +38,17 @@ class SteamUser:
         )
         if status != 200:
             print(result)
+            return
 
     def download_inventory(self) -> None:
         status, result = self.__crawler.interact(
             'get_inventory',
             steam_id=self.steam_id,
         )
-        if status == 200:
-            self.__inventory = result
+        if status != 200:
+            print(result)
+            return
+        self.__inventory = result
 
     def inventory_downloaded(self) -> bool:
         return not self.__inventory.empty()
@@ -61,6 +64,7 @@ class SteamUser:
         )
         if status != 200:
             print(result)
+            return
 
     def __save_user(self) -> str:
         saved = SteamUserRepository.get_by_steam_id(self.__steam_id)

@@ -40,3 +40,6 @@ CREATE TABLE IF NOT EXISTS user_badges
  	experience INT,
  	unlocked_at TIMESTAMP
   );
+
+ALTER TABLE user_badges
+ADD COLUMN active BOOL DEFAULT True;
