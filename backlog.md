@@ -39,7 +39,8 @@ Um lembrete final: não me proponho a descrever extensivamente de forma prévia 
     - [x] Tabela de usuarios
     - [x] Tabela de jogos e eventos
     - [x] Tabelas de badges
-    - [ ] Tabelas de cartas e items
+    - [X] Tabelas de cartas
+    - [ ] Tabela de items
     - [ ] Tabela de inventários
 
 - Web crawlers

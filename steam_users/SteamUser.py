@@ -1,11 +1,10 @@
 from web_crawlers.SteamWebCrawler import SteamWebCrawler
 from data_models.SteamInventory import SteamInventory
+from data_models.SteamGames import SteamGames
 from repositories.SteamUserRepository import SteamUserRepository
 
 
 class SteamUser:
-
-    possible_cookies = ['sessionid', 'steamMachineAuth', 'steamLoginSecure', 'timezoneOffset']
 
     def __init__(self, user_data: dict):
         self.__steam_id: str = user_data['steam_id']
@@ -29,7 +28,7 @@ class SteamUser:
     def log_in(self, login_data: dict) -> None:
         pass
 
-    def get_badges(self, logged_in: bool = True):
+    def get_badges(self, logged_in: bool = True) -> None:
         status, result = self.__crawler.interact(
             'get_badges',
             logged_in=logged_in,
@@ -39,6 +38,8 @@ class SteamUser:
         if status != 200:
             print(result)
             return
+
+        self.__get_trading_cards_of_new_games()
 
     def download_inventory(self) -> None:
         status, result = self.__crawler.interact(
@@ -53,7 +54,7 @@ class SteamUser:
     def inventory_downloaded(self) -> bool:
         return not self.__inventory.empty()
 
-    def open_booster_packs(self, booster_pack_class_id: str):
+    def open_booster_packs(self, booster_pack_class_id: str) -> None:
         # function should use game_name instead of booster_pack_class_id
         status, result = self.__crawler.interact(
             'open_booster_pack',
@@ -61,6 +62,20 @@ class SteamUser:
             booster_pack_class_id=booster_pack_class_id,
             steam_alias=self.__steam_alias,
             inventory=self.__inventory,
+        )
+        if status != 200:
+            print(result)
+            return
+
+    def __get_trading_cards_of_new_games(self) -> None:
+        games_to_get_trading_cards = SteamGames.get_all_without_trading_cards()
+        if games_to_get_trading_cards.empty:
+            return
+
+        status, result = self.__crawler.interact(
+            'get_trading_cards', logged_in=True,
+            games=games_to_get_trading_cards,
+            steam_id=self.steam_id,
         )
         if status != 200:
             print(result)

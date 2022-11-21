@@ -43,3 +43,13 @@ CREATE TABLE IF NOT EXISTS user_badges
 
 ALTER TABLE user_badges
 ADD COLUMN active BOOL DEFAULT True;
+
+CREATE TABLE IF NOT EXISTS trading_cards
+  (
+ 	id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ 	game_id INT REFERENCES games NOT NULL,
+ 	set_number SMALLINT NOT NULL,
+  	name TEXT NOT NULL,
+  	url_name TEXT,
+  	UNIQUE (game_id, set_number)
+  );

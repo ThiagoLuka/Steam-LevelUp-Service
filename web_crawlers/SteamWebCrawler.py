@@ -4,6 +4,7 @@ from web_crawlers.SteamWebPage import SteamWebPage
 from web_crawlers.InventoryPage import InventoryPage
 from web_crawlers.ProfileBadgesPage import ProfileBadgesPage
 from web_crawlers.OpenBoosterPack import OpenBoosterPack
+from web_crawlers.GameCardsPage import GameCardsPage
 
 
 class SteamWebCrawler:
@@ -16,7 +17,8 @@ class SteamWebCrawler:
         self.__web_pages: dict[str, SteamWebPage] = {
             'open_booster_pack': OpenBoosterPack(),
             'get_badges': ProfileBadgesPage(),
-            'get_inventory': InventoryPage()
+            'get_inventory': InventoryPage(),
+            'get_trading_cards': GameCardsPage(),
         }
         self.__cookies: dict = {}
         self.__set_cookies(data)
