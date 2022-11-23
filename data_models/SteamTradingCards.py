@@ -1,33 +1,20 @@
-import pandas as pd
-
 from repositories.SteamTradingCardsRepository import SteamTradingCardsRepository
+from data_models.PandasDataModel import PandasDataModel
 from data_models.PandasUtils import PandasUtils
 
 
-class SteamTradingCards:
+class SteamTradingCards(PandasDataModel):
 
     __columns = ['id', 'game_id', 'set_number', 'name', 'url_name']
 
     def __init__(self, **data):
-        if not data:
-            self.__df = pd.DataFrame(columns=self.__get_columns())
-        else:
-            if (
-                    list(data.keys()) != self.__get_columns() and
-                    list(data.keys()) != self.__get_columns(with_id=False)
-            ):
-                raise TypeError(f'Trying to set {self.__class__.__name__} with invalid data')
-            self.__df = pd.DataFrame(data.values(), index=list(data.keys())).T
+        cols = self.__get_columns()
+        class_name = self.__class__.__name__
+        super().__init__(class_name, cols, **data)
 
-    def __add__(self, other):
-        if isinstance(other, SteamTradingCards):
-            self.__df = pd.concat([self.__df, other.__df], ignore_index=True)
-            self.__df.drop_duplicates(inplace=True)
-            return self
-
-    @property
-    def df(self) -> pd.DataFrame:
-        return self.__df.copy()
+    @classmethod
+    def __get_columns(cls) -> list:
+        return cls.__columns.copy()
 
     @classmethod
     def __from_db(cls, data: list[tuple]):
@@ -35,18 +22,12 @@ class SteamTradingCards:
         dict_data = dict(zip(cls.__columns, zipped_data))
         return cls(**dict_data)
 
-    @classmethod
-    def __get_columns(cls, with_id: bool = True) -> list:
-        cols = cls.__columns.copy()
-        if not with_id:
-            cols.remove('id')
-        return cols
-
     def save(self) -> None:
         saved = SteamTradingCards.get_all()
-        new_and_update = PandasUtils.df_set_difference(self.__df, saved.__df, ['game_id', 'set_number'])
+        new_and_update = PandasUtils.df_set_difference(self.df, saved.df, ['game_id', 'set_number'])
         if not new_and_update.empty:
-            cols_to_insert = self.__get_columns(with_id=False)
+            cols_to_insert = self.__get_columns()
+            cols_to_insert.remove('id')
             zipped_data = PandasUtils.zip_df_columns(new_and_update, cols_to_insert)
             SteamTradingCardsRepository.insert_multiple_tcgs(zipped_data)
 
