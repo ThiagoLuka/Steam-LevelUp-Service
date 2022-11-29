@@ -11,7 +11,7 @@ class SteamUser:
         self.__steam_alias: str = user_data['steam_alias']
         self.__user_id = self.__save_user()
         self.__crawler = SteamWebCrawler(self.__steam_id, user_data)
-        self.__inventory = SteamInventory()
+        self.__inventory = SteamInventory.get_todays_inventory_from_db(self.__user_id)
 
     @property
     def steam_id(self) -> str:
@@ -44,6 +44,7 @@ class SteamUser:
     def download_inventory(self) -> None:
         status, result = self.__crawler.interact(
             'get_inventory',
+            user_id=self.__user_id,
             steam_id=self.steam_id,
         )
         if status != 200:
@@ -52,16 +53,16 @@ class SteamUser:
         self.__inventory = result
 
     def inventory_downloaded(self) -> bool:
-        return not self.__inventory.empty()
+        return not self.__inventory.empty
 
-    def open_booster_packs(self, booster_pack_class_id: str) -> None:
-        # function should use game_name instead of booster_pack_class_id
+    def open_booster_packs(self, game_name: str) -> None:
+        bp_assets_id_list = self.__inventory.get_booster_pack_assets_id(
+            user_id=self.__user_id, game_name=game_name
+        )
         status, result = self.__crawler.interact(
             'open_booster_pack',
-            game_name='',
-            booster_pack_class_id=booster_pack_class_id,
+            booster_pack_assets_ids=bp_assets_id_list,
             steam_alias=self.__steam_alias,
-            inventory=self.__inventory,
         )
         if status != 200:
             print(result)
@@ -81,7 +82,7 @@ class SteamUser:
             print(result)
             return
 
-    def __save_user(self) -> str:
+    def __save_user(self) -> int:
         saved = SteamUserRepository.get_by_steam_id(self.__steam_id)
         if not saved:
             SteamUserRepository.save_user(self.__steam_id, self.__steam_alias)

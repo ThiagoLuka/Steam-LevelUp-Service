@@ -1,3 +1,5 @@
+import pandas as pd
+
 from repositories.SteamGamesRepository import SteamGamesRepository
 from data_models.PandasDataModel import PandasDataModel
 from data_models.PandasUtils import PandasUtils
@@ -45,6 +47,14 @@ class SteamGames(PandasDataModel):
     def get_id_by_market_id(market_id: str) -> str:
         result = SteamGamesRepository.get_by_market_id(market_id)
         return result[0][0]
+
+    @staticmethod
+    def get_ids_list_by_market_ids_list(market_ids: list) -> list:
+        market_ids_series = SteamGames(market_id=market_ids).df.drop(columns=['id', 'name'])
+        all_games_df = SteamGames.get_all().df.copy()
+        all_games_df['market_id'] = all_games_df['market_id'].astype(int)
+        new_complete_df = pd.merge(market_ids_series, all_games_df, how='left')
+        return list(new_complete_df['id'])
 
     def get_market_ids(self) -> list:
         if self.empty:

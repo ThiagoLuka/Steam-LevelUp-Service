@@ -18,13 +18,10 @@ if __name__ == '__main__':
         if command == 2:
             user.get_badges()
         if command == 3:
-            # open_booster_packs should use game_name instead of booster_pack_class_id
-            # game_name = MainUI.get_game_name()
-            booster_pack_class_id = GenericUI.get_string('Digite o class_id do booster pack: ')
-
+            game_name = GenericUI.get_string('Digite o nome do jogo: ')
             if not user.inventory_downloaded():
                 user.download_inventory()
-            user.open_booster_packs(booster_pack_class_id)
+            user.open_booster_packs(game_name)
 
         if command == 0:
             MainUI.goodbye()

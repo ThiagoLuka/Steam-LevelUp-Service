@@ -53,3 +53,28 @@ CREATE TABLE IF NOT EXISTS trading_cards
   	url_name TEXT,
   	UNIQUE (game_id, set_number)
   );
+
+CREATE TABLE IF NOT EXISTS item_types
+  (
+  	id INT PRIMARY KEY,
+  	name TEXT NOT NULL
+  );
+
+CREATE TABLE IF NOT EXISTS item_descriptions
+  (
+ 	id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ 	game_id INT REFERENCES games,
+ 	class_id TEXT NOT NULL UNIQUE,
+ 	type_id INT REFERENCES item_types NOT NULL,
+ 	name TEXT NOT NULL,
+ 	url_name TEXT
+  );
+
+CREATE TABLE IF NOT EXISTS item_assets
+  (
+   	id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+   	user_id INT REFERENCES users NOT NULL,
+   	description_id INT REFERENCES item_descriptions NOT NULL,
+   	asset_id TEXT NOT NULL,
+   	created_at DATE NOT NULL
+  );

@@ -33,15 +33,14 @@ Um lembrete final: não me proponho a descrever extensivamente de forma prévia 
 - DB e data structures
   - Estabelecer o básico para persistir dados
     - [x] Criar banco localmente e conectá-lo com o programa
-    - [x] (parcial) Usar pandas para todas as estruturas de dados (inventory ta mal feito)
+    - [x] Usar pandas para todas as estruturas de dados
     - [ ] DB remoto?
   - Avançar no DB
     - [x] Tabela de usuarios
     - [x] Tabela de jogos e eventos
     - [x] Tabelas de badges
     - [X] Tabelas de cartas
-    - [ ] Tabela de items
-    - [ ] Tabela de inventários
+    - [X] Tabela de inventários
 
 - Web crawlers
   - Geral
@@ -49,10 +48,10 @@ Um lembrete final: não me proponho a descrever extensivamente de forma prévia 
     - [ ] Navegar por meio do Selenium
     - [x] Desacoplar melhor usuários Steam dos web_crawlers
   - Steam Inventory
-    - [x] (parcial) Fazer download e acessar itens do inventário
+    - [x] Fazer download e acessar itens do inventário
     - [x] Abrir pacotes de cartas da steam dado id do pacote
-    - [ ] Abrir pacotes de cartas dado o nome do jogo
-    - [ ] Capaz de extrair e persistir novas informações
+    - [X] Abrir pacotes de cartas dado o nome do jogo
+    - [X] Capaz de extrair e persistir novas informações
   - Steam badges
     - [x] Capaz de extrair e persistir novas informações
     - [ ] Fazer transformação dos dados de forma assíncrona
