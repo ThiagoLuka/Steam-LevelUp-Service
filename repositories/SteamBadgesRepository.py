@@ -30,7 +30,7 @@ class SteamBadgesRepository:
         return result
 
     @staticmethod
-    def get_user_type_badges(user_id: int, badge_type: str, cols_to_get: list) -> list[tuple]:
+    def get_user_badges_with_type_details(user_id: int, badge_type: str, cols_to_get: list) -> list[tuple]:
         columns = QueryBuilderPG.cols_to_get_list_to_str(cols_to_get)
         query = f"""
             SELECT {columns} FROM user_badges

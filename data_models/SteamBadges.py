@@ -8,9 +8,9 @@ from data_models.PandasUtils import PandasUtils
 class SteamBadges(PandasDataModel):
 
     __columns = ['id', 'name', 'level', 'experience', 'foil', 'game_id', 'pure_badge_page_id', 'unlocked_at']
-    __game_badges_columns = ['id', 'game_id', 'name', 'level', 'foil']
-    __pure_badges_columns = ['id', 'pure_badge_page_id', 'name']
-    __user_badges_columns = ['id', 'user_id', 'game_badge_id', 'pure_badge_id', 'experience', 'unlocked_at', 'active']
+    __columns_game = ['id', 'game_id', 'name', 'level', 'foil']
+    __columns_pure = ['id', 'pure_badge_page_id', 'name']
+    __columns_user = ['id', 'user_id', 'game_badge_id', 'pure_badge_id', 'experience', 'unlocked_at', 'active']
 
     def __init__(self, badge_type: str = '', **data):
         cols = self.__get_columns(badge_type)
@@ -21,9 +21,9 @@ class SteamBadges(PandasDataModel):
     def __get_columns(cls, badge_type: str = ''):
         cols = {
             '': cls.__columns.copy(),
-            'game': cls.__game_badges_columns.copy(),
-            'pure': cls.__pure_badges_columns.copy(),
-            'user': cls.__user_badges_columns.copy(),
+            'game': cls.__columns_game.copy(),
+            'pure': cls.__columns_pure.copy(),
+            'user': cls.__columns_user.copy(),
         }.get(badge_type, [])
         return cols
 
@@ -53,8 +53,7 @@ class SteamBadges(PandasDataModel):
 
     @classmethod
     def __save_by_type(cls, badge_type: str, new: pd.DataFrame, check_diff_on_columns: list[str]) -> None:
-        data = SteamBadgesRepository.get_all(badge_type)
-        saved = cls.__from_db(badge_type, data).df
+        saved = cls.get_all(badge_type).df
         if badge_type == 'user':
             saved = PandasUtils.format_only_positive_int_with_nulls(saved, ['game_badge_id', 'pure_badge_id'])
         to_save = PandasUtils.df_set_difference(new, saved, check_diff_on_columns)
@@ -65,7 +64,7 @@ class SteamBadges(PandasDataModel):
             if badge_type == 'game':
                 SteamBadgesRepository.upsert_multiple_game_badges(zipped_data)
             if badge_type == 'pure':
-                cols_to_insert[0].replace('pure_badge_page_id', 'page_id')
+                cols_to_insert[0] = cols_to_insert[0].replace('pure_badge_page_id', 'page_id')
                 SteamBadgesRepository.insert_multiple_badges(badge_type, cols_to_insert, zipped_data)
             if badge_type == 'user':
                 SteamBadgesRepository.insert_multiple_badges(badge_type, cols_to_insert, zipped_data)
@@ -100,7 +99,7 @@ class SteamBadges(PandasDataModel):
     @staticmethod
     def __user_game_badges_id_to_deactivate(user_id: int) -> list:
         cols_to_get_game = ['user_badges.id', 'game_id', 'level', 'foil']
-        user_game_badges = SteamBadgesRepository.get_user_type_badges(user_id, 'game', cols_to_get_game)
+        user_game_badges = SteamBadgesRepository.get_user_badges_with_type_details(user_id, 'game', cols_to_get_game)
         df_game = pd.DataFrame(data=user_game_badges, columns=cols_to_get_game)
         df_game.drop(df_game[df_game['foil']].index, inplace=True)
         sorted_by_higher_level = df_game.sort_values(by='level', ascending=False)
@@ -110,7 +109,7 @@ class SteamBadges(PandasDataModel):
     @staticmethod
     def __user_pure_badges_id_to_deactivate(user_id: int) -> list:
         cols_to_get_pure = ['user_badges.id', 'page_id', 'unlocked_at']
-        user_pure_badges = SteamBadgesRepository.get_user_type_badges(user_id, 'pure', cols_to_get_pure)
+        user_pure_badges = SteamBadgesRepository.get_user_badges_with_type_details(user_id, 'pure', cols_to_get_pure)
         df_pure = pd.DataFrame(data=user_pure_badges, columns=cols_to_get_pure)
         pure_sorted_by_most_recent = df_pure.sort_values(by='unlocked_at', ascending=False)
         only_least_recent = pure_sorted_by_most_recent[pure_sorted_by_most_recent['page_id'].duplicated(keep='first')]

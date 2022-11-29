@@ -36,7 +36,7 @@ class SteamUser:
             steam_id=self.steam_id,
         )
         if status != 200:
-            print(result)
+            print(f'\n{result}\n')
             return
 
         self.__get_trading_cards_of_new_games()
@@ -48,7 +48,7 @@ class SteamUser:
             steam_id=self.steam_id,
         )
         if status != 200:
-            print(result)
+            print(f'\n{result}\n')
             return
         self.__inventory = result
 
@@ -65,7 +65,7 @@ class SteamUser:
             steam_alias=self.__steam_alias,
         )
         if status != 200:
-            print(result)
+            print(f'\n{result}\n')
             return
 
     def __get_trading_cards_of_new_games(self) -> None:
@@ -79,7 +79,7 @@ class SteamUser:
             steam_id=self.steam_id,
         )
         if status != 200:
-            print(result)
+            print(f'\n{result}\n')
             return
 
     def __save_user(self) -> int:
