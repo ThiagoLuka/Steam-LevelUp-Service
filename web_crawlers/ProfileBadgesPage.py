@@ -10,7 +10,7 @@ from data_models.SteamGames import SteamGames
 from data_models.SteamBadges import SteamBadges
 
 
-class ProfileBadgesPage(SteamWebPage):
+class ProfileBadgesPage(SteamWebPage, name='get_badges'):
 
     @staticmethod
     def required_user_data() -> tuple:

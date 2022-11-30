@@ -4,7 +4,7 @@ from user_interfaces.GenericUI import GenericUI
 from web_crawlers.SteamWebPage import SteamWebPage
 
 
-class OpenBoosterPack(SteamWebPage):
+class OpenBoosterPack(SteamWebPage, name='open_booster_pack'):
 
     @staticmethod
     def required_user_data() -> tuple:

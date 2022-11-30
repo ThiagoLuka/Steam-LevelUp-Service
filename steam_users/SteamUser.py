@@ -1,4 +1,4 @@
-from web_crawlers.SteamWebCrawler import SteamWebCrawler
+from web_crawlers import SteamWebCrawler
 from data_models.SteamInventory import SteamInventory
 from data_models.SteamGames import SteamGames
 from repositories.SteamUserRepository import SteamUserRepository
@@ -36,7 +36,7 @@ class SteamUser:
             steam_id=self.steam_id,
         )
         if status != 200:
-            print(f'\n{result}\n')
+            print(f'\n{status}: {result}\n')
             return
 
         self.__get_trading_cards_of_new_games()
@@ -44,11 +44,12 @@ class SteamUser:
     def download_inventory(self) -> None:
         status, result = self.__crawler.interact(
             'get_inventory',
+            logged_in=True,
             user_id=self.__user_id,
             steam_id=self.steam_id,
         )
         if status != 200:
-            print(f'\n{result}\n')
+            print(f'\n{status}: {result}\n')
             return
         self.__inventory = result
 
@@ -65,7 +66,7 @@ class SteamUser:
             steam_alias=self.__steam_alias,
         )
         if status != 200:
-            print(f'\n{result}\n')
+            print(f'\n{status}: {result}\n')
             return
 
     def __get_trading_cards_of_new_games(self) -> None:
@@ -74,12 +75,13 @@ class SteamUser:
             return
 
         status, result = self.__crawler.interact(
-            'get_trading_cards', logged_in=True,
+            'get_trading_cards',
+            logged_in=True,
             games=games_to_get_trading_cards,
             steam_id=self.steam_id,
         )
         if status != 200:
-            print(f'\n{result}\n')
+            print(f'\n{status}: {result}\n')
             return
 
     def __save_user(self) -> int:

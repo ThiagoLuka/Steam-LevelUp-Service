@@ -1,36 +1,26 @@
 from typing import Any
 
 from web_crawlers.SteamWebPage import SteamWebPage
-from web_crawlers.InventoryPage import InventoryPage
-from web_crawlers.ProfileBadgesPage import ProfileBadgesPage
-from web_crawlers.OpenBoosterPack import OpenBoosterPack
-from web_crawlers.GameCardsPage import GameCardsPage
 
 
 class SteamWebCrawler:
 
     valid_cookies = 'sessionid', 'steamMachineAuth', 'steamLoginSecure', 'timezoneOffset'
-    web_pagess: dict = {}
 
     def __init__(self, steam_id: str, data: dict):
         self.__steam_id = steam_id
-        self.__web_pages: dict[str, SteamWebPage] = {
-            'open_booster_pack': OpenBoosterPack(),
-            'get_badges': ProfileBadgesPage(),
-            'get_inventory': InventoryPage(),
-            'get_trading_cards': GameCardsPage(),
-        }
         self.__cookies: dict = {}
         self.__set_cookies(data)
         # self.__web_session = None  # it should be implemented later
 
     def interact(self, interaction_type: str, logged_in: bool = False, **kwargs) -> (int, Any):
 
-        web_page = self.__web_pages.get(interaction_type, None)
-
         # checking if data is good
-        if web_page is None:
+        if interaction_type not in SteamWebPage.page_interactions.keys():
             return 404, 'not implemented'
+
+        concrete_web_page_reference = SteamWebPage.page_interactions[interaction_type]
+        web_page = concrete_web_page_reference()
 
         for user_data in kwargs.keys():
             if user_data not in web_page.required_user_data():
@@ -52,7 +42,7 @@ class SteamWebCrawler:
                 return 403, f'missing cookie: {required_cookie}'
             cookies[required_cookie] = self.__cookies[required_cookie]
 
-        #
+        # executing interaction
         try:
             result = web_page.interact(cookies, **kwargs)
             return 200, result
@@ -64,5 +54,5 @@ class SteamWebCrawler:
             if name == 'steamMachineAuth':
                 self.__cookies[name + self.__steam_id] = cookie
                 continue
-            if name in SteamWebCrawler.valid_cookies:
+            if name in self.valid_cookies:
                 self.__cookies[name] = cookie

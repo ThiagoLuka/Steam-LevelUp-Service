@@ -8,7 +8,7 @@ from data_models.SteamGames import SteamGames
 from data_models.SteamTradingCards import SteamTradingCards
 
 
-class GameCardsPage(SteamWebPage):
+class GameCardsPage(SteamWebPage, name='get_trading_cards'):
 
     @staticmethod
     def required_user_data() -> tuple:
@@ -31,6 +31,7 @@ class GameCardsPage(SteamWebPage):
             raw_page = self.__extract_raw_gamecards_page(cookies, steam_id, game['market_id'])
 
             if not raw_page.find_class('badge_card_set_cards'):
+                GenericUI.progress_completed(progress=index + 1, total=progress_total, text=progress_text)
                 continue
 
             trading_cards = self.__transform_raw_to_trading_cards(raw_page, game['id'], game['market_id'])

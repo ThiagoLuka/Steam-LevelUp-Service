@@ -6,7 +6,7 @@ from data_models.SteamInventory import SteamInventory
 from data_models.SteamGames import SteamGames
 
 
-class InventoryPage(SteamWebPage):
+class InventoryPage(SteamWebPage, name='get_inventory'):
 
     @staticmethod
     def required_user_data() -> tuple:
