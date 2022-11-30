@@ -107,6 +107,7 @@ class SteamInventory(PandasDataModel):
 
     @staticmethod
     def get_booster_pack_assets_id(user_id: int, game_name: str) -> list:
-        data = SteamInventoryRepository.get_booster_pack_assets_id(user_id, game_name)
+        today = str(datetime.today().date())
+        data = SteamInventoryRepository.get_booster_pack_assets_id(user_id, game_name, today)
         assets_id_list = [row[0] for row in data]
         return assets_id_list

@@ -34,7 +34,8 @@ class SteamInventoryRepository:
         return result
 
     @staticmethod
-    def get_booster_pack_assets_id(user_id: int, game_name: str) -> list[tuple]:
+    def get_booster_pack_assets_id(user_id: int, game_name: str, date: str) -> list[tuple]:
+        game_name = QueryBuilderPG.sanitize_string(game_name)
         query = f"""
             SELECT asset_id
             FROM item_assets i_assets
@@ -44,6 +45,7 @@ class SteamInventoryRepository:
             WHERE
                 user_id = '{user_id}'
                 AND games.name = '{game_name}'
+                AND created_at = '{date}'
                 AND item_types.name = 'Booster Pack';
         """
         result = DBController.execute(query=query, get_result=True)
