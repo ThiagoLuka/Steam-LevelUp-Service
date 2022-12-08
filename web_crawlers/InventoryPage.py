@@ -31,7 +31,7 @@ class InventoryPage(SteamWebPage, name='get_inventory'):
         descripts.save('descriptions')
         assets.save('assets', user_id)
 
-        inventory = SteamInventory.get_todays_inventory_from_db(user_id)
+        inventory = SteamInventory.get_last_saved_inventory_from_db(user_id)
         return inventory
 
     def __download_raw_inventory(self, steam_id: str, cookies: dict) -> tuple[list, list]:

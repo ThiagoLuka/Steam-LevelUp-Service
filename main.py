@@ -18,9 +18,9 @@ if __name__ == '__main__':
         if command == 2:
             user.get_badges()
         if command == 3:
+            user.download_inventory()
+        if command == 4:
             game_name = GenericUI.get_string('Digite o nome do jogo: ')
-            if not user.inventory_downloaded():
-                user.download_inventory()
             user.open_booster_packs(game_name)
 
         if command == 0:

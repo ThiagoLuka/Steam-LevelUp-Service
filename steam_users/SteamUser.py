@@ -11,7 +11,7 @@ class SteamUser:
         self.__steam_alias: str = user_data['steam_alias']
         self.__user_id = self.__save_user()
         self.__crawler = SteamWebCrawler(self.__steam_id, user_data)
-        self.__inventory = SteamInventory.get_todays_inventory_from_db(self.__user_id)
+        self.__inventory = SteamInventory.get_last_saved_inventory_from_db(self.__user_id)
 
     @property
     def steam_id(self) -> str:
