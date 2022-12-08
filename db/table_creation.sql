@@ -78,3 +78,7 @@ CREATE TABLE IF NOT EXISTS item_assets
    	asset_id TEXT NOT NULL,
    	created_at DATE NOT NULL
   );
+
+ALTER TABLE item_assets
+	ALTER COLUMN created_at TYPE TIMESTAMP,
+	ADD COLUMN removed_at TIMESTAMP;

@@ -11,12 +11,12 @@ class SteamInventoryRepository:
         return result
 
     @staticmethod
-    def get_by_user_id_and_date(user_id: int, date: str) -> list[tuple]:
+    def get_current_by_user_id(user_id: int) -> list[tuple]:
         query = f"""
             SELECT * FROM item_assets
             WHERE
                 user_id = '{user_id}'
-                AND created_at = '{date}';
+                AND removed_at IS NULL;
         """
         result = DBController.execute(query=query, get_result=True)
         return result
@@ -64,12 +64,27 @@ class SteamInventoryRepository:
         DBController.execute(query=query)
 
     @staticmethod
-    def insert_todays_assets(assets: zip, cols_to_insert: list[str]) -> None:
+    def insert_new_assets(assets: zip, cols_to_insert: list[str]) -> None:
         columns = QueryBuilderPG.cols_to_insert_list_to_str(cols_to_insert)
         values = QueryBuilderPG.unzip_to_values_query_str(assets)
         query = f"""
             INSERT INTO item_assets {columns}
             VALUES {values};
+        """
+        DBController.execute(query=query)
+
+    @staticmethod
+    def update_removed_assets(assets: zip) -> None:
+        values = QueryBuilderPG.unzip_to_values_query_str(assets)
+        query = f"""
+            UPDATE item_assets
+            SET
+                removed_at = update.removed_at::timestamp
+            FROM (
+                VALUES {values}
+            ) AS update(id, removed_at)
+            WHERE
+                item_assets.id = update.id::int;
         """
         DBController.execute(query=query)
 

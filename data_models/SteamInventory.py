@@ -10,7 +10,7 @@ class SteamInventory(PandasDataModel):
 
     __columns = ['id', 'user_id', 'game_id', 'name', 'type_id', 'class_id', 'asset_id', 'url_name']
     __columns_description = ['id', 'game_id', 'class_id', 'type_id', 'name', 'url_name']
-    __columns_asset = ['id', 'user_id', 'description_id', 'asset_id', 'created_at']
+    __columns_asset = ['id', 'user_id', 'description_id', 'asset_id', 'created_at', 'removed_at']
     __columns_item_type = ['id', 'name']
 
     def __init__(self, table: str = '', **data):
@@ -58,19 +58,29 @@ class SteamInventory(PandasDataModel):
     def __save_assets(self, user_id: int = 0, table: str = 'assets') -> None:
         if user_id == 0:
             return
-        today = str(datetime.today().date())
-        last_saved_date = self.__last_saved_date(user_id)
 
-        if today > last_saved_date:  # save only if today is a new day
-            to_save = self.df[['user_id', 'class_id', 'asset_id']].copy()
-            class_id_to_descript_id = SteamInventory.__description_id_class_id_relationship()
+        new_inv = self.df
+        last_inv = SteamInventory.get_last_saved_inventory_from_db(user_id)
+        to_remove = PandasUtils.df_set_difference(last_inv.df, new_inv, 'asset_id')
+        to_save = PandasUtils.df_set_difference(new_inv, last_inv.df, 'asset_id')
+
+        if not to_remove.empty:
+            to_remove = to_remove[['id', 'removed_at']].copy()
+            to_remove['removed_at'] = str(datetime.now())
+            zipped_data = PandasUtils.zip_df_columns(to_remove, ['id', 'removed_at'])
+            SteamInventoryRepository.update_removed_assets(zipped_data)
+
+        if not to_save.empty:
+            to_save = to_save[['user_id', 'class_id', 'asset_id']].copy()
+            class_id_to_descript_id = SteamInventory.__class_id_to_description_id_relationship()
             to_save = pd.merge(to_save, class_id_to_descript_id, how='left')
-            to_save['created_at'] = today
+            to_save['created_at'] = str(datetime.now())
+            to_save['removed_at'] = 'None'
 
             cols_to_insert = self.__get_columns(table)
             cols_to_insert.remove('id')
             zipped_data = PandasUtils.zip_df_columns(to_save, cols_to_insert)
-            SteamInventoryRepository.insert_todays_assets(zipped_data, cols_to_insert)
+            SteamInventoryRepository.insert_new_assets(zipped_data, cols_to_insert)
 
     @staticmethod
     def __last_saved_date(user_id: int) -> str:
@@ -82,7 +92,7 @@ class SteamInventory(PandasDataModel):
         return last_saved_date
 
     @staticmethod
-    def __description_id_class_id_relationship() -> pd.DataFrame:
+    def __class_id_to_description_id_relationship() -> pd.DataFrame:
         data = SteamInventoryRepository.get_all('descriptions')
         df_relationship = SteamInventory.__from_db('descriptions', data).df
         df_relationship = df_relationship[['id', 'class_id']].copy()
@@ -95,9 +105,8 @@ class SteamInventory(PandasDataModel):
         return SteamInventory.__from_db(table, data)
 
     @staticmethod
-    def get_todays_inventory_from_db(user_id: int) -> 'SteamInventory':
-        today = str(datetime.today().date())
-        data = SteamInventoryRepository.get_by_user_id_and_date(user_id, today)
+    def get_last_saved_inventory_from_db(user_id: int) -> 'SteamInventory':
+        data = SteamInventoryRepository.get_current_by_user_id(user_id)
         return SteamInventory.__from_db('assets', data)
 
     @staticmethod
