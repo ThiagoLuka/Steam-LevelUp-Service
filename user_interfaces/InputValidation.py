@@ -25,7 +25,7 @@ class InputValidation:
         error_message = 'Please enter "y" for yes or "n" for no.\n'
         while invalid:
             try:
-                user_input = str(input(text_to_show))
+                user_input = str(input(f'{text_to_show} (y/n) '))
                 if user_input == 'y':
                     user_input = True
                     invalid = False
