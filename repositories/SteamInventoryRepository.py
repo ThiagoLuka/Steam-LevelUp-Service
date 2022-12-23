@@ -5,15 +5,16 @@ from db.DBController import DBController
 class SteamInventoryRepository:
 
     @staticmethod
-    def get_all(table_name: str = 'assets') -> list[tuple]:
-        query = f"""SELECT * FROM item_{table_name};"""
+    def get_all(table_name: str, columns: list) -> list[tuple]:
+        query = f"""SELECT {', '.join(columns)} FROM item_{table_name};"""
         result = DBController.execute(query=query, get_result=True)
         return result
 
     @staticmethod
-    def get_current_by_user_id(user_id: int) -> list[tuple]:
+    def get_current_by_user_id(user_id: int, columns: list) -> list[tuple]:
         query = f"""
-            SELECT * FROM item_assets
+            SELECT {', '.join(columns)}
+            FROM item_assets
             WHERE
                 user_id = '{user_id}'
                 AND removed_at IS NULL;
@@ -52,11 +53,10 @@ class SteamInventoryRepository:
         return result
 
     @staticmethod
-    def upsert_descriptions(descripts: zip, cols_to_insert: list[str]) -> None:
-        columns = QueryBuilderPG.cols_to_insert_list_to_str(cols_to_insert)
-        values = QueryBuilderPG.unzip_to_values_query_str(descripts)
+    def upsert_descriptions(descripts: zip, columns: list[str]) -> None:
+        values = QueryBuilderPG.unzip_to_query_values_str(descripts)
         query = f"""
-            INSERT INTO item_descriptions {columns}
+            INSERT INTO item_descriptions ({', '.join(columns)})
             VALUES {values}
             ON CONFLICT (class_id) DO UPDATE
             SET url_name = EXCLUDED.url_name;
@@ -64,18 +64,17 @@ class SteamInventoryRepository:
         DBController.execute(query=query)
 
     @staticmethod
-    def insert_new_assets(assets: zip, cols_to_insert: list[str]) -> None:
-        columns = QueryBuilderPG.cols_to_insert_list_to_str(cols_to_insert)
-        values = QueryBuilderPG.unzip_to_values_query_str(assets)
+    def insert_new_assets(assets: zip, columns: list[str]) -> None:
+        values = QueryBuilderPG.unzip_to_query_values_str(assets)
         query = f"""
-            INSERT INTO item_assets {columns}
+            INSERT INTO item_assets ({', '.join(columns)})
             VALUES {values};
         """
         DBController.execute(query=query)
 
     @staticmethod
     def update_removed_assets(assets: zip) -> None:
-        values = QueryBuilderPG.unzip_to_values_query_str(assets)
+        values = QueryBuilderPG.unzip_to_query_values_str(assets)
         query = f"""
             UPDATE item_assets
             SET
@@ -90,7 +89,7 @@ class SteamInventoryRepository:
 
     @staticmethod
     def insert_item_types(item_types: zip) -> None:
-        values = QueryBuilderPG.unzip_to_values_query_str(item_types)
+        values = QueryBuilderPG.unzip_to_query_values_str(item_types)
         query = f"""
             INSERT INTO item_types
             VALUES {values};
