@@ -1,3 +1,5 @@
+import sys
+
 from user_interfaces.MainUI import MainUI
 from user_interfaces.GenericUI import GenericUI
 from steam_users.SteamUserController import SteamUserController
@@ -7,6 +9,8 @@ from db.DBController import DBController
 if __name__ == '__main__':
 
     SteamUserController()
+    if not SteamUserController().has_user:
+        sys.exit(0)
     DBController()
 
     while True:
