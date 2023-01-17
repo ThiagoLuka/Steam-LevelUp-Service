@@ -3,7 +3,7 @@ import requests
 from .SteamWebPage import SteamWebPage
 
 
-class InventoryPage(SteamWebPage, name='get_inventory_page'):
+class InventoryPage(SteamWebPage, name='inventory_page'):
 
     @staticmethod
     def required_user_data() -> tuple:
@@ -14,9 +14,8 @@ class InventoryPage(SteamWebPage, name='get_inventory_page'):
         return 'steamMachineAuth', 'steamLoginSecure',
 
     def interact(self, cookies: dict, **kwargs) -> requests.Response:
-        steam_id: str = kwargs['steam_id']
-        items_per_page: int = kwargs['items_per_page']
-        start_assetid: str = kwargs['start_assetid']
+        items_per_page: int = kwargs['items_per_page'] if 'items_per_page' in kwargs.keys() else 2000
+        start_assetid: str = kwargs['start_assetid'] if 'start_assetid' in kwargs.keys() else None
 
         params = {
             'count': items_per_page,

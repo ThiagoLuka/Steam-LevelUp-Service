@@ -12,7 +12,11 @@ class SteamUser:
         self.__steam_id: str = user_data['steam_id']
         self.__steam_alias: str = user_data['steam_alias']
         self.__user_id = self.__save_user()
-        self.__crawler = SteamWebCrawler(self.__steam_id, user_data)
+        self.__crawler = SteamWebCrawler(
+            self.__steam_id,
+            self.__steam_alias,
+            user_data,  # user_data should hold user cookies, at least for now
+        )
 
     @property
     def steam_id(self) -> str:
@@ -47,7 +51,6 @@ class SteamUser:
         OpenGameBoosterPacks().run(
             self.__crawler,
             user_id=self.__user_id,
-            steam_alias=self.__steam_alias,
             game_name=game_name
         )
 
