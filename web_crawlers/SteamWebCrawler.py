@@ -36,12 +36,8 @@ class SteamWebCrawler:
         if missing_cookies:
             return 403, f'missing cookies: {missing_cookies}'
 
-        for required_cookie in web_page.required_cookies():
-            if required_cookie == 'steamMachineAuth':
-                required_cookie = 'steamMachineAuth' + self.__steam_id
-            if required_cookie not in self.__cookies.keys():
-                return 403, f'missing cookie: {required_cookie}'
-            cookies[required_cookie] = self.__cookies[required_cookie]
+        required_referer = web_page.required_referer()
+        kwargs['referer'] = self.__get_page_referer(required_referer, **kwargs)
 
         try:
             result = web_page.interact(cookies, **kwargs)
@@ -83,6 +79,14 @@ class SteamWebCrawler:
             request_cookies[cookie] = self.__cookies[cookie]
 
         return request_cookies, missing_cookies
+
+    @staticmethod
+    def __get_page_referer(req_referer: str, **kwargs) -> str:
+        if not req_referer:
+            return ''
+        referer_web_page = SteamWebPage.page_names[req_referer]()
+        referer_url = referer_web_page.generate_url(**kwargs)
+        return referer_url
 
 
 if __name__ == '__main__':

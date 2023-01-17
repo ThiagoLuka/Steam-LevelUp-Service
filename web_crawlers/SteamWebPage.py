@@ -15,6 +15,13 @@ class SteamWebPage:
 
     @staticmethod
     def required_cookies() -> tuple:
+        return ()
+
+    @staticmethod
+    def required_referer() -> str:
+        return ''
+
+    def generate_url(self, **kwargs) -> str:
         pass
 
     def interact(self, cookies: dict, **kwargs):
