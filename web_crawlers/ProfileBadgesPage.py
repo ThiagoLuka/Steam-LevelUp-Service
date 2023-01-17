@@ -3,7 +3,7 @@ import requests
 from .SteamWebPage import SteamWebPage
 
 
-class ProfileBadgesPage(SteamWebPage, name='get_profile_badges'):
+class ProfileBadgesPage(SteamWebPage, name='profile_badges'):
 
     @staticmethod
     def required_user_data() -> tuple:
