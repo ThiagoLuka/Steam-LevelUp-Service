@@ -26,6 +26,7 @@ if __name__ == '__main__':
         if command == 4:
             game_name = GenericUI.get_game_name()
             user.open_booster_packs(game_name)
+            user.update_inventory()
 
         if command == 0:
             MainUI.goodbye()

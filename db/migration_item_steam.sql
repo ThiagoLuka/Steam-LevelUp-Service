@@ -36,8 +36,7 @@ CREATE TABLE IF NOT EXISTS item_trading_cards
 
 CREATE TABLE IF NOT EXISTS item_steam_descriptions
 (
-	id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY
-	,item_steam_id INT NOT NULL REFERENCES items_steam(id)
+	item_steam_id INT NOT NULL REFERENCES items_steam(id) PRIMARY KEY
 	,class_id TEXT NOT NULL
 	,CONSTRAINT unique_descript UNIQUE(class_id)
 );
@@ -48,8 +47,7 @@ CREATE TABLE IF NOT EXISTS item_steam_assets
 	,item_steam_id INT NOT NULL REFERENCES items_steam(id)
 	,user_id INT NOT NULL REFERENCES users(id)
 	,asset_id TEXT NOT NULL
-	,marketable BOOL NOT NULL
 	,created_at TIMESTAMP NOT NULL
-	,removed_at TIMESTAMP NOT NULL
-	,CONSTRAINT unique_asset UNIQUE(asset_id)
+	,removed_at TIMESTAMP
+	,CONSTRAINT unique_asset UNIQUE(user_id, asset_id)
 );

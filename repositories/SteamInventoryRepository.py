@@ -5,16 +5,10 @@ from db.DBController import DBController
 class SteamInventoryRepository:
 
     @staticmethod
-    def get_all(table_name: str, columns: list) -> list[tuple]:
-        query = f"""SELECT {', '.join(columns)} FROM item_{table_name};"""
-        result = DBController.execute(query=query, get_result=True)
-        return result
-
-    @staticmethod
     def get_current_by_user_id(user_id: int, columns: list) -> list[tuple]:
         query = f"""
             SELECT {', '.join(columns)}
-            FROM item_assets
+            FROM item_steam_assets
             WHERE
                 user_id = '{user_id}'
                 AND removed_at IS NULL;
@@ -23,52 +17,41 @@ class SteamInventoryRepository:
         return result
 
     @staticmethod
-    def last_inventory_saved_date(user_id: int) -> list[tuple]:
+    def get_current_size_by_user_id(user_id: int) -> int:
         query = f"""
-            SELECT created_at
-            FROM item_assets
-            WHERE user_id = {user_id}
-            ORDER BY created_at DESC
-            LIMIT 1;
+            SELECT COUNT(id) FROM item_steam_assets
+            WHERE
+                user_id = '{user_id}'
+                AND removed_at IS NULL;
         """
         result = DBController.execute(query=query, get_result=True)
-        return result
+        return result[0][0]
 
     @staticmethod
     def get_booster_pack_assets_id(user_id: int, game_name: str) -> list[tuple]:
         game_name = QueryBuilderPG.sanitize_string(game_name)
         query = f"""
-            SELECT asset_id
-            FROM item_assets i_assets
-            INNER JOIN item_descriptions ON item_descriptions.id = i_assets.description_id
-            INNER JOIN item_types ON item_descriptions.type_id = item_types.id
-            INNER JOIN games ON games.id = item_descriptions.game_id
+            SELECT asset_id 
+            FROM item_steam_assets isa 
+            INNER JOIN items_steam is2 ON is2.id = isa.item_steam_id
+            INNER JOIN item_steam_types ist ON ist.id = is2.item_steam_type_id
+            INNER JOIN games g ON g.id = is2.game_id
             WHERE
                 user_id = '{user_id}'
-                AND games.name = '{game_name}'
-                AND item_types.name = 'Booster Pack'
+                AND g."name" = '{game_name}'
+                AND ist."name" = 'Booster Pack'
                 AND removed_at IS NULL;
         """
         result = DBController.execute(query=query, get_result=True)
         return result
 
     @staticmethod
-    def upsert_descriptions(descripts: zip, columns: list[str]) -> None:
-        values = QueryBuilderPG.unzip_to_query_values_str(descripts)
-        query = f"""
-            INSERT INTO item_descriptions ({', '.join(columns)})
-            VALUES {values}
-            ON CONFLICT (class_id) DO UPDATE
-            SET url_name = EXCLUDED.url_name;
-        """
-        DBController.execute(query=query)
-
-    @staticmethod
-    def insert_new_assets(assets: zip, columns: list[str]) -> None:
+    def upsert_new_assets(assets: zip, columns: list[str]) -> None:
         values = QueryBuilderPG.unzip_to_query_values_str(assets)
         query = f"""
-            INSERT INTO item_assets ({', '.join(columns)})
-            VALUES {values};
+            INSERT INTO item_steam_assets ({', '.join(columns)})
+            VALUES {values}
+            ON CONFLICT (user_id, asset_id) DO NOTHING;
         """
         DBController.execute(query=query)
 
@@ -76,22 +59,13 @@ class SteamInventoryRepository:
     def update_removed_assets(assets: zip) -> None:
         values = QueryBuilderPG.unzip_to_query_values_str(assets)
         query = f"""
-            UPDATE item_assets
+            UPDATE item_steam_assets
             SET
                 removed_at = update.removed_at::timestamp
             FROM (
                 VALUES {values}
             ) AS update(id, removed_at)
             WHERE
-                item_assets.id = update.id::int;
-        """
-        DBController.execute(query=query)
-
-    @staticmethod
-    def insert_item_types(item_types: zip) -> None:
-        values = QueryBuilderPG.unzip_to_query_values_str(item_types)
-        query = f"""
-            INSERT INTO item_types
-            VALUES {values};
+                item_steam_assets.id = update.id::int;
         """
         DBController.execute(query=query)
